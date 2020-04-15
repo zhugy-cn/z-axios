@@ -58,6 +58,7 @@ export interface AxiosInstance extends Axios {
 
 
 
+// 拦截器
 export interface ResolvedFn<T = any> {
   (val: T): T | Promise<T>;
 }
