@@ -1,5 +1,5 @@
-import { isPlainObject } from "./util";
-
+import { isPlainObject, deepMerge } from "./util";
+import { METHOD } from '../types/index'
 
 function normalizeHeaderName(headers: any, normalizedName: string): void {
   if (!headers) return;
@@ -40,4 +40,16 @@ export function parseResponseHeaders(headers: string): any {
     parsed[key] = val;
   })
   return parsed;
+}
+
+export function flattenHeaders(headers: any, method: METHOD): any {
+  if (!headers) {
+    return headers;
+  }
+  headers = deepMerge(headers.common || {}, headers[method] || {}, headers);
+  const methodsToDelete = ['delete', 'get', 'head', 'options', 'post', 'put', 'patch', 'common'];
+  methodsToDelete.forEach(method => {
+    delete headers[method];
+  })
+  return headers;
 }

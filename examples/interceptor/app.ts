@@ -38,7 +38,7 @@ axios({
   headers: {
     test: ''
   }
-}).then(res =>{
+}).then(res => {
   console.log('axios res: ', res)
   console.log('axios res.data: ', res.data)
 })

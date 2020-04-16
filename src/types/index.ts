@@ -1,4 +1,4 @@
-type METHOD = 'get' | 'GET'
+export type METHOD = 'get' | 'GET'
   | 'delete' | 'DELETE'
   | 'head' | 'HEAD'
   | 'options' | 'OPTIONS'
@@ -6,6 +6,10 @@ type METHOD = 'get' | 'GET'
   | 'put' | 'PUT'
   | 'patch' | 'PATCH';
 
+
+export interface AxiosTransformer {
+  (data: any, headers?: any): any
+}
 // 请求参数
 export interface AxiosRequestConfig {
   url?: string;
@@ -15,6 +19,10 @@ export interface AxiosRequestConfig {
   headers?: any;
   responseType?: XMLHttpRequestResponseType;
   timeout?: number;
+  transformRequest?: AxiosTransformer | AxiosTransformer[];
+  transformResponse?: AxiosTransformer | AxiosTransformer[];
+
+  [propName: string]: any
 }
 
 // 响应参数
@@ -34,6 +42,12 @@ export interface AxiosPromise extends Promise<AxiosResponse> {
 
 // Axios 混合对象
 export interface Axios {
+  defaults: AxiosRequestConfig;
+  interceptors: {
+    request: AxiosInterceptorManager<AxiosRequestConfig>,
+    response: AxiosInterceptorManager<AxiosResponse>
+  }
+
   request(config: AxiosRequestConfig): AxiosPromise;
 
   get(url: string, config?: AxiosRequestConfig): AxiosPromise;

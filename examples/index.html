@@ -25,6 +25,50 @@
 
 
 
+
+  <!-- <script>
+
+
+
+    debugger
+    new Promise((resolve, reject) => {
+      console.log("log: 外部promise");      // 1
+      resolve();
+    })
+      .then(() => {
+        console.log("log: 外部第一个then");   // 2
+        new Promise((resolve, reject) => {
+          console.log("log: 内部promise");  // 3
+          resolve();
+        })
+          .then(() => {
+            console.log("log: 内部第一个then"); // 5
+          })
+          .then(() => {
+            console.log("log: 内部第二个then"); // 6
+          });
+      })
+      .then(() => {
+        console.log("log: 外部第二个then"); // 4
+      });
+
+
+    let p = new Promise((resolve, reject) => {
+      setTimeout(resolve, 1000);
+    });
+    p.then(() => {
+      console.log("log: 外部第一个then");
+    });
+    p.then(() => {
+      console.log("log: 外部第二个then");
+    });
+    p.then(() => {
+      console.log("log: 外部第三个then");
+    });
+
+
+  </script> -->
+
   <!-- <script>
 
     var promise = new Promise(function (resolve, reject) {
@@ -158,6 +202,8 @@ return Promise.resolve('hello')  === return 'hello'
         console.log(3, res)
         console.log('===================')
         return res
+        // return Promise.reject(res)
+
       },
       function rejected(err) {
         console.log(33, err)
@@ -165,7 +211,7 @@ return Promise.resolve('hello')  === return 'hello'
         return Promise.reject(err)
       }
     )
-    manager.response.use(
+    let index = manager.response.use(
       function resolved(res) {
         console.log(4, res)
         console.log('===================')
@@ -174,12 +220,25 @@ return Promise.resolve('hello')  === return 'hello'
       function rejected(err) {
         console.log(44, err)
         console.log('===================')
-        return err
+        return Promise.reject(err)
+      }
+    )
+    manager.response.use(
+      function resolved(res) {
+        console.log(5, res)
+        console.log('===================')
+        return res
+      },
+      function rejected(err) {
+        console.log(55, err)
+        console.log('===================')
+        return Promise.reject(err)
         // return Promise.reject(err)
       }
     )
 
-
+    console.log(index)
+    manager.response.eject(index)
 
     let config = {
       name: 'jack',
@@ -188,8 +247,8 @@ return Promise.resolve('hello')  === return 'hello'
 
     function dispatchRequest(config) {
       console.log('1-1')
-      // return Promise.resolve(config)
-      return Promise.reject(config)
+      return Promise.resolve(config)
+      // return Promise.reject(config)
     }
 
     function start() {
@@ -207,7 +266,7 @@ return Promise.resolve('hello')  === return 'hello'
       })
 
       let promise = Promise.resolve(config);
-      // debugger
+      // 循环执行 promise 
       while (chain.length) {
         const { resolved, rejected } = chain.shift();
         promise = promise.then(resolved, rejected);
