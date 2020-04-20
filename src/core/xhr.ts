@@ -5,15 +5,26 @@ import { createError } from "../helpers/error";
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
-    const { url, headers, data = null, method = 'get', responseType, timeout } = config;
+    const { url, headers, data = null, method = 'get', responseType, timeout, cancelToken } = config;
+
     const request = new XMLHttpRequest();
     request.open(method.toUpperCase(), url!);
+
     if (responseType) {
       request.responseType = responseType;
     }
     if (timeout) {
       request.timeout = timeout;
     }
+    
+    if (cancelToken) {
+      cancelToken.promise.then(reason => {
+        request.abort();
+        reject(reason);
+      })
+    }
+
+
     // 设置请求头
     Object.keys(headers).forEach(name => {
       if (data === null && name.toUpperCase() === 'content-type') {

@@ -26,7 +26,6 @@ export default class Axios {
     }
   }
 
-
   request(url: any, config?: any): AxiosPromise {
     if (typeof url === 'string') {
       config = config || {};
